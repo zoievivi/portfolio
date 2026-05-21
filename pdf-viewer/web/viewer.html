@@ -38,7 +38,7 @@ See https://github.com/adobe-type-tools/cmap-resources
 
   <body tabindex="0">
 
-<!-- ========= 密码验证层（开始） ========= -->
+<!-- ========= 密码验证层 ========= -->
 <div id="passwordOverlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:white; z-index:9999; display:flex; align-items:center; justify-content:center; flex-direction:column;">
     <h2>请输入密码访问文档</h2>
     <input type="password" id="passwordInput" placeholder="密码" style="padding:10px; font-size:18px; width:200px;">
@@ -48,22 +48,27 @@ See https://github.com/adobe-type-tools/cmap-resources
 </div>
 
 <script>
-    // 在这里修改你的密码（把 "123456" 改成你自己的）
-    const CORRECT_PASSWORD = "MI.0706";
+    // 如果已经验证过（来自跳转返回），直接隐藏密码层
+    if (sessionStorage.getItem('pdf_verified') === 'true') {
+        sessionStorage.removeItem('pdf_verified');
+        document.getElementById('passwordOverlay').style.display = 'none';
+    }
+
+    // 正确的密码（改成你自己的）
+    const CORRECT_PASSWORD = "ZW.asd";
     
     function checkPassword() {
         const inputPwd = document.getElementById('passwordInput').value;
         if (inputPwd === CORRECT_PASSWORD) {
-            // 密码正确：隐藏整个密码遮罩层
-            document.getElementById('passwordOverlay').style.display = 'none';
+            sessionStorage.setItem('pdf_verified', 'true');
+            // 👇 把 "我的文档.pdf" 换成你的实际 PDF 文件名（注意路径）
+            window.location.href = '?file=zhaoweiportfolio.pdf';
         } else {
             document.getElementById('errorMsg').innerText = '密码错误，请重试';
         }
     }
     
-    // 绑定确认按钮事件
     document.getElementById('submitPwd').addEventListener('click', checkPassword);
-    // 允许按回车键提交
     document.getElementById('passwordInput').addEventListener('keypress', function(e) {
         if (e.key === 'Enter') checkPassword();
     });
